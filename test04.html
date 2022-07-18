@@ -1,0 +1,199 @@
+<html lang="euc-kr">
+<head>
+    <title>모달 팝업 테스트</title>
+    <style>
+        .modal {position: absolute; background-color: black; width:200px; height: 200px;}
+        .modal_title {position: absolute; background-color: white;width:100%; height:20px; color: black; border: solid 1px; border-color: black;}
+    </style>
+    
+</head>
+<body>
+    <button type="button" id="add">추가</button>
+    <input type="file" id="fileLoad">불러오기</input>
+<script>
+
+// const reader = new FileReader();
+// const file = '';
+// reader.onload = function(e) {
+//     fileData = e.target.result;
+//     //file데이터를 읽어서 처리할 로직.
+//     console.log(fileData)
+// };
+// reader.readAsText(file, 'euc-kr');
+const GV = {
+    cnt : 0,
+    zIdx : 0,
+    postit: {},
+    move : 20,
+    modalcnt:0
+}
+document.getElementById('fileLoad').addEventListener('change', (e)=> {
+    console.log(e.target.files[0])
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        fileData = e.target.result;
+        console.log(fileData);
+    }
+    reader.readAsText(e.target.files[0], 'euc-kr');
+});
+document.getElementById('add').addEventListener('click', () =>{
+    const idx = GV.cnt++, 
+          option = {
+            id: `modal_${idx}`,
+            title: ""
+        }
+    GV.postit[`modal_${idx}`] = new Modal(option);
+});
+class Modal{
+    constructor(option){
+        this.id = option.id;
+        this.modal = this.createModalDiv(option);
+        this.DataControl();
+    }
+    DataControl(){
+        const lastM = getLastPostit();
+        if(GV.modalcnt > 0){
+            GV.move += 10;
+            this.modal.style.left = lastM.modal.offsetLeft + GV.move + "px";
+            //this.modal.sytle.left = `${lastM.modal.offsetLeft + GV.move}px`
+            this.modal.style.top = lastM.modal.offsetTop + GV.move + "px";
+         }else{
+            GV.move += 10;
+            this.modal.style.left = GV.move + "px";
+            this.modal.style.top = GV.move + "px";
+         }
+        GV.modalcnt++;
+        this.modal.style.zIndex = GV.zIdx++;
+    }
+
+    createModalDiv(option){
+        // make dom
+        const div = document.createElement("div"),
+              title = document.createElement("div");
+        title.classList.add('modal_title');
+        title.textContent = option.title; // 타이틀1
+        title.id = `${option.id}_title`; // 타이틀1
+        title.style.background = "#9966FF";
+        title.style.color = "white";
+        title.style.fontFamily = "monospace";
+        title.style.fontSize = "15";
+        title.style.textAlign = "center";
+        div.classList.add('modal');
+        div.id = option.id; // modal1
+        div.appendChild(title);
+        document.body.appendChild(div);
+
+        this.setDraggable();
+        /*1. title 우측에 a태그를 추가한다. (x버튼)
+            클릭 시 팝업을 제거한다. (delModal 메소드 구현하여 호출)
+        */
+        // a태그 버튼 부분.
+        const closeArea = document.createElement("a");
+        closeArea.style.float = "right";
+        closeArea.style.paddingRight = "10px";
+        closeArea.textContent = "X";
+        closeArea.style.fontFamily = "monospace";
+        closeArea.style.textAlign = "justify";
+        // close.onclick = 
+        closeArea.addEventListener('click', this.delModal.bind(this));
+        title.appendChild(closeArea);
+        // 텍스트 영역 부분.
+        const textdivmain = document.createElement("div"),
+              TextAreaDiv = document.createElement("div"),
+              TextArea = document.createElement('textarea'),
+              textnode = document.createTextNode('');
+
+        TextArea.appendChild(textnode);
+        TextAreaDiv.appendChild(TextArea);
+        div.appendChild(TextAreaDiv);
+        
+        // 텍스트 영역 스타일 부분.
+        TextArea.style.padding = "86px 21px";
+        TextArea.style.background = "#FFCCFF";
+        TextArea.style.boxSizing = "border-box";
+        TextArea.style.textAlign = "justify";
+        TextArea.fontFamily = "monospace";
+
+        return div;
+    }
+    delModal(e){ /*구현*/
+        console.log("delete");
+        // e.preventDefault();
+        // e.stopPropagation();
+        document.body.removeChild(this.modal);
+        const lastM = getLastPostit();
+        if(GV.modalcnt > 0){
+            GV.move -= 10;
+            this.modal.style.left = lastM.modal.offsetLeft + GV.move + "px";
+            this.modal.style.top = lastM.modal.offsetTop + GV.move + "px";
+            GV.zIdx--;
+            console.log(GV.modalcnt);
+        }else{
+            GV.move -= 10;
+            this.modal.style.left = GV.move + "px";
+            this.modal.style.top = GV.move + "px";
+        }
+        delete GV.postit[this.id];
+        GV.modalcnt--;
+        console.log(GV.modalcnt);
+        console.log(GV.move);
+    }
+    setDraggable(){
+        const header = document.getElementById(`${this.id}_title`);
+        const ele = document.getElementById(this.id);
+            
+        let pos1, pos2, pos3, pos4;
+        const closeDragElement = () => {
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+        const elementDrag = (e) => {
+            console.log("elementDrag");
+            e = e || window.event;
+            e.preventDefault();
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            const posTop = ele.offsetTop - pos2;
+            const posLeft = ele.offsetLeft - pos1;
+            if(posTop > 0 && (screen.availHeight) - (posTop + ele.offsetHeight) > 0){
+                ele.style.top = posTop + 'px';
+            }
+            if(posLeft > 0 && (screen.availWidth) - (posLeft + ele.offsetWidth) > 0){
+                ele.style.left = posLeft + 'px';
+            }
+        }
+        const dragMouseDown = (e) => {
+            e.preventDefault();
+            console.log(e.target.tagName)
+            if(e.target.tagName !== 'A'){
+                console.log("dragMouseDown");
+                console.log(GV.zIdx);
+                this.modal.style.zIndex = GV.zIdx++;
+                console.log(GV.zIdx);
+                e = e || window.event;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+        }
+        if(header !== null){
+            header.style.cursor = 'pointer';
+            header.onmousedown = dragMouseDown;
+        }else{
+            ele.onmousedown = dragMouseDown;
+        }
+    }
+}
+const getLastPostit = () => {
+    const keys = Object.keys(GV.postit);
+    const lastKey = keys.at(-1);
+    console.log(GV.postit[lastKey]);
+    return GV.postit[lastKey];
+}
+
+</script>    
+</body>
+</html>

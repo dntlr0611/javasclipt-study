@@ -1,0 +1,118 @@
+<script>
+/* 2022-06-30 이건 생성*/
+
+
+const PHONE_BOOK = {};
+const add = function(name, number){
+    if(PHONE_BOOK?.[name]){
+        PHONE_BOOK[name].push(number);
+    }else{
+        PHONE_BOOK[name] = [number];
+    }
+}
+add("이건", "010-5042-2100");
+add("이건", "010-5042-2200");
+add("조우식", "010-5042-2101");
+add("송유정", "010-5042-2102");
+console.log(PHONE_BOOK);
+const get = function(name){
+    if(PHONE_BOOK?.[name]){
+        return PHONE_BOOK[name];
+    }else{
+        null;
+    }
+}
+console.log(get("이건"));
+console.log(get("조우식"));
+console.log(get("송유정"));
+
+const getNames = function(){
+    return Object.keys(PHONE_BOOK);
+}
+console.log(getNames());
+
+
+/*방법2 use Map
+const PHONE_BOOK = new Map();
+const add = function(name, phone){
+    if(PHONE_BOOK.has(name)){
+        PHONE_BOOK.get(name).push(phone);
+    }else{
+        PHONE_BOOK.set(name, [phone]);
+    }
+}
+add("이건", "010-5042-2100");
+add("이건", "010-5042-2200");
+add("조우식", "010-5042-2101");
+add("송유정", "010-5042-2102");
+
+const get = function(name){
+    if(PHONE_BOOK.get(name)){
+        return PHONE_BOOK.get(name);
+    }else{
+        return null;
+    }
+}
+
+console.log(get("이건"));
+console.log(get("조우식"));
+console.log(get("송유정"));
+
+const getNames = function(){
+    return PHONE_BOOK.keys();
+}
+console.log(getNames());
+const getNames2 = function(){
+    const names = [];
+    PHONE_BOOK.forEach((value, key) => {
+        names.push(key);
+    });
+    return names;
+}
+console.log(getNames2());
+*/
+ //방법3 Class 사용
+class PhoneBook{
+    constructor(){
+        this.dataset = new Map();
+    }
+    add(name, number){
+        const ds = this.dataset;
+        if(ds.has(name)){
+            ds.get(name).push(number);
+        }else{
+            ds.set(name, [number]);
+        }
+    }
+    get(name){
+        if(this.dataset.has(name)){
+            return this.dataset.get(name);
+        }else{
+            return null;
+        }
+    }
+    getNames(){
+        const names = [];
+        for(const [key, value] of this.dataset.entries()){
+            names.push(key);
+        }
+        return names;
+    }
+}
+
+const phoneBook = new PhoneBook();
+
+phoneBook.add("이건", "010-5042-2100");
+phoneBook.add("이건", "010-5042-2200");
+phoneBook.add("조우식", "010-5042-2101");
+phoneBook.add("송유정", "010-5042-2102");
+
+console.log(phoneBook.get("이건"));
+console.log(phoneBook.get("조우식"));
+console.log(phoneBook.get("송유정"));
+
+console.log(phoneBook.getNames());
+
+console.log(phoneBook);
+
+</script>

@@ -1,0 +1,189 @@
+<html>
+<head>
+    <title>로그인 테스트</title>
+    <style>
+        form {position:absolute; left:40%; top:40%;}
+    </style>
+</head>
+<body>
+    <form>
+        <div>
+            <span>ID</span>
+            <input type="text" id="id" placeholder="ID를 입력하세요." class="input_id">
+        </div>
+        <div>
+            <span>PW</span>
+            <input type="password" id="pw" placeholder="패스워드를 입력하세요." class="input_pw">
+        </div>
+        <div>
+            <span id="message"></span>
+        </div>
+        <div><button type="button" style="cursor:pointer">전송</button></div>
+    </form>
+<script>
+/* 2022-07-01 이건 생성
+selector, htmlCollection, nodeList, eventlistener, attiribute control
+*/
+/*
+1. element tag로 id, pw 요소에 접근한다.
+2. id attribute로 id, pw 요소에 접근한다.
+3. class attribute로 id, pw 요소에 접근한다.
+4. html input을 htmlCollection, nodeList로 받아온다.
+5. 두 요소의 입력값(value) 을 읽어온다.
+6. 전송 버튼을 클릭했을 때 이벤트를 등록한다.
+7. params 라는 object를 생성해 id, pw값을 넣는다.
+   ex) {
+        id: 아이디입력값,
+        pw: 패스워드입력값
+   }
+8. 7번 이벤트에서는 입력한 id가 'test', pw가 'test01'이 아닐 경우 id=message 요소에 '아이디나 패스워드가 일치하지 않습니다.' 텍스트를 보여준다.
+*/
+
+/* 1. element tag
+class Login_Page{
+    
+    login(params){
+        const id = params.id;
+        const pw = params.pw;
+
+        if(id == "" || pw == ""){
+            message.innerText = "로그인에 실패하였습니다.";
+            alert("아이디 또는 패스워드를 입력하세요");
+        }
+        else if(id === 'test' && pw === 'test01'){
+            message.innerText = "로그인에 성공하였습니다.";
+        }
+        else {
+            message.innerText = "로그인에 실패하였습니다.";
+            alert("로그인 정보를 다시 확인해주세요.");
+        }
+    }
+}
+   const event = document.querySelector('button');
+   const message = document.getElementById("message");
+   const input = document.getElementsByTagName('input');
+   const start =  new Login_Page();
+   event.addEventListener('click' , ()=> {
+        let params = {
+        id : input[0].value,
+        pw : input[1].value
+    }
+        start.login(params);
+   } );
+
+*/
+// 2. id attribute
+/*   
+   class Login_Page{
+    
+    login(params){
+        const id = params.id.value;
+        const pw = params.pw.value;
+
+        if(id == "" || pw == ""){
+            message.innerText = "로그인에 실패하였습니다.";
+            alert("아이디 또는 패스워드를 입력하세요");
+        }
+        else if(id === 'test' && pw === 'test01'){
+            message.innerText = "로그인에 성공하였습니다.";
+        }
+        else {
+            message.innerText = "로그인에 실패하였습니다.";
+            alert("로그인 정보를 다시 확인해주세요.");
+        }
+    }
+}
+   const event = document.querySelector('button');
+   const message = document.getElementById("message");
+   const Input_Id = document.getElementById('id');
+   const Input_Pw = document.getElementById('pw');
+   
+   const start =  new Login_Page();
+   
+   event.addEventListener('click' , ()=> {
+        let params = {
+        id : Input_Id,
+        pw : Input_Pw
+    }
+        start.login(params);
+   } );
+*/
+// 3 class attribute
+/*
+class Login_Page{
+    
+    login(params){
+        const id = params.id[0].value;
+        const pw = params.pw[0].value;
+
+        if(id == "" || pw == ""){
+            message.innerText = "로그인에 실패하였습니다.";
+            alert("아이디 또는 패스워드를 입력하세요");
+        }
+        else if(id === 'test' && pw === 'test01'){
+            message.innerText = "로그인에 성공하였습니다.";
+        }
+        else {
+            message.innerText = "로그인에 실패하였습니다.";
+            alert("로그인 정보를 다시 확인해주세요.");
+        }
+    }
+}
+   const event = document.querySelector('button');
+   const message = document.getElementById("message");
+   const Input_Id = document.getElementsByClassName('input_id');
+   const Input_Pw = document.getElementsByClassName('input_pw');
+   const start =  new Login_Page();
+   
+   event.addEventListener('click' , ()=> {
+        let params = {
+        id : Input_Id,
+        pw : Input_Pw
+    }
+        start.login(params);
+   } );
+*/
+//htmlCollection, nodelist
+
+class Login_Page{
+    
+    login(params){
+        const id = params.id.value;
+        const pw = params.pw.value;
+
+        if(id == "" || pw == ""){
+            message.innerText = "로그인에 실패하였습니다.";
+            alert("아이디 또는 패스워드를 입력하세요");
+        }
+        else if(id === 'test' && pw === 'test01'){
+            message.innerText = "로그인에 성공하였습니다.";
+        }
+        else {
+            message.innerText = "로그인에 실패하였습니다.";
+            alert("로그인 정보를 다시 확인해주세요.");
+        }
+    }
+}
+   const event = document.querySelector('button');
+   const message = document.getElementById("message");
+   const htc = document.getElementsByTagName('input');
+   const nl = document.querySelectorAll('input');
+   const start =  new Login_Page();
+   
+   event.addEventListener('click' , ()=> {
+        let params = {
+        // htmlCollection
+        id : htc[0],
+        pw : htc[1]
+        
+       // nodelist
+        //id : nl[0],
+        // pw : nl[1]
+        
+    }
+        start.login(params);
+   } );
+
+</script>    
+</body>
+</html>

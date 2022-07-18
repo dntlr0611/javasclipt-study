@@ -1,0 +1,100 @@
+<html>
+<head>
+    <title>로그인 테스트</title>
+    <style>
+        form {position:absolute; left:40%; top:40%;}
+    </style>
+</head>
+<body>
+    <form>
+        <div>
+            <span>ID</span>
+            <input type="text" id="id" placeholder="ID를 입력하세요." class="input_id">
+        </div>
+        <div>
+            <span>PW</span>
+            <input type="password" id="pw" placeholder="패스워드를 입력하세요." class="input_pw">
+        </div>
+        <div>
+            <span id="message"></span>
+        </div>
+        <div><button type="button" style="cursor:pointer">전송</button></div>
+    </form>
+<script>
+/* 2022-07-01 이건 생성
+selector, htmlCollection, nodeList, eventlistener, attiribute control
+*/
+/*
+1. element tag로 id, pw 요소에 접근한다.
+2. id attribute로 id, pw 요소에 접근한다.
+3. class attribute로 id, pw 요소에 접근한다.
+4. 위에서 접근한 요소를 htmlCollection, nodelist type으로 받아온다.
+5. 두 요소의 입력값(value) 을 읽어온다.
+6. 전송 버튼을 클릭했을 때 이벤트를 등록한다.
+7. params 라는 object를 생성해 id, pw값을 넣는다.
+   ex) {
+        id: 아이디입력값,
+        pw: 패스워드입력값
+   }
+8. 7번 이벤트에서는 입력한 id가 'test', pw가 'test01'이 아닐 경우 id=message 요소에 '아이디나 패스워드가 일치하지 않습니다.' 텍스트를 보여준다.
+*/
+
+/*1. element tag로 id, pw 요소에 접근한다.*/
+const tagId = document.getElementsByTagName("input")[0];
+const tagPw = document.getElementsByTagName("input")[1];
+console.log(tagId, tagPw);
+
+/*2. id attribute로 id, pw 요소에 접근한다.*/
+const id = document.getElementById("id");
+const pw = document.getElementById("pw");
+console.log(id, pw);
+
+/*3.class attribute로 id, pw 요소에 접근한다.*/
+const classId = document.getElementsByClassName("input_id")[0];
+const classPw = document.getElementsByClassName("input_pw")[0];
+console.log(classId, classPw);
+
+/*1,2,3 을 querySelector로 접근*/
+const nlTagId = document.querySelectorAll("input")[0];
+const nlTagPw = document.querySelectorAll("input")[1];
+console.log(nlTagId, nlTagPw);
+
+const nlId = document.querySelector("#id");
+const nlPw = document.querySelector("#pw");
+console.log(nlId, nlPw);
+
+const nlClassId = document.querySelector(".input_id");
+const nlClassPw = document.querySelector(".input_pw");
+console.log(nlClassId, nlClassPw);
+console.dir(nlId);
+
+/*4. html input을 htmlCollection, nodeList로 받아온다.
+   htmlCollection은 위에 아래 코드는 nodelist
+*/
+const hc = document.getElementsByTagName("input");
+const nl = document.querySelectorAll("input");
+console.log(hc, nl);
+
+/*5. 두 요소의 입력값(value) 을 읽어온다.*/
+const idVal = document.getElementById("id").value;
+const pwVal = document.getElementById("pw").value;
+
+/*6. 전송 버튼을 클릭했을 때 이벤트를 등록한다.*/
+document.getElementsByTagName("button")[0].addEventListener("click", (e) => {
+    e.preventDefault;
+    /*7. params 라는 object를 생성해 id, pw값을 넣는다.*/
+    const params = {
+        id: document.getElementById("id").value,
+        pw: document.getElementById("pw").value  
+    }
+    /*8. 7번 이벤트에서는 입력한 id가 'test', pw가 'test01'이 아닐 경우 id=message 요소에 '아이디나 패스워드가 일치하지 않습니다.' 텍스트를 보여준다.*/
+    const ms = document.getElementById("message");
+    if(params.id == "test" && params.pw == "test01"){
+        ms.textContent = "성공!";
+    }else{
+        ms.textContent = "아이디나 패스워드가 일치하지 않습니다.";
+    }
+})
+</script>    
+</body>
+</html>
