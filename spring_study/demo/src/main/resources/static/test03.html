@@ -1,0 +1,346 @@
+
+
+<html lang="euc-kr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-kr">
+    <title>계산기 테스트</title>
+    <style>
+        table {border-collapse: collapse;}
+        td {padding: 5px 10px;text-align: center;}
+        input {border: none; text-align: right;}
+        input:focus {outline: none;}
+    </style>
+</head>
+<body>
+    <table border="1">
+        <tr>
+            <td colspan="4"><input type="text" id="display" readonly></td>
+        </tr>
+        <tr>
+            <td colspan="4"><input type="text" id="result" readonly></td>
+        </tr>
+        <tr>
+            <td colspan="3">AC</td>
+            <td>/</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>8</td>
+            <td>9</td>
+            <td>*</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>5</td>
+            <td>6</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>2</td>
+            <td>3</td>
+            <td>+</td>
+        </tr>
+        <tr>
+            <td colspan="2">0</td>
+            <td>.</td>
+            <td>=</td>
+        </tr>
+    </table>
+<script>
+/* 2022-07-04 이건 생성*/
+/*
+계산기 기능을 구현한다.
+windows 계산기 기능 참고
+
+1. td 에 클릭 이벤트를 등록한다.
+     - 숫자입력 시 display에 클릭한 숫자가 추가되어 표출된다.
+     - 'AC'를 클릭하면 display, reuslt의 value를 초기화 한다.
+     - '=' 을 클릭하면 display의 연산을 수행하여 display, result에 값을 표출한다.
+     - 연산자(/, *, -, +)를 클릭하면 display에 연산자가 추가되어 표출된다.
+       - 만약, display value에 연산자가 있다면 현재 추가한 연산자 이전은 연산을 하여 표출한다.
+       - Ex) 1+1 이 display에 있을 때 - 연산자를 클릭했다면 display에는 2-가 입력된다.
+             1+1을 연산할 때는 substring을 활용해 문자열을 자르고 eval 함수를 사용하여 연산 값을 구한다.
+             Ex) const result = eval(Number(firstNum) + operator + Number(lastNum));
+     - '='이 연속적으로 입력되지 않도록 한다.
+*/
+
+
+// let numberStack = [];
+// let operatorStack = [];
+// let firstNum = "";
+// let lastNum = "";
+// let resultOb = "";
+
+class Calculator {
+    constructor() {
+        this.numberStack = [];
+        this.operatorStack = [];
+        this.firstNum = "";
+        this.lastNum = "";
+        this.resultOb = "";
+        this.display = document.getElementById('display');
+        this.result = document.getElementById('result');
+        this.StartEvent();
+    }
+    clear(){
+        this.numberStack = [];
+        this.operatorStack = [];
+        this.firstNum = "";
+        this.lastNum = "";
+        this.resultOb = "";
+        this.display.value = "";
+        this.result.value = "";
+    }
+    StartEvent() {
+        document.querySelectorAll("td").forEach((td) => {
+            if (td.children.length < 1) {
+                td.style.cursor = "pointer";
+                td.addEventListener('click', () => {
+                    const text = td.textContent;
+                    this.Display(text);
+                    console.log(text);
+                });
+            }
+        });
+    }
+
+    Display(text) {
+        if (text === '=' || text === '.' || text === 'AC') {
+            this.etcFunc(text);
+        } else if (!isNaN(Number(text))) {
+            this.numberStack.push(text);
+            console.log(this.numberStack);
+            this.display.value += text;
+        } else {
+            // if (this.numberStack.lengh != 0) {
+            this.operatorStack.push(text);
+            console.log(this.operatorStack);
+            this.calculate(text);
+            // }
+        }
+    }
+    calculate(text) {
+        if (this.operatorStack.length > 1) {
+            let op1 = "";
+            let op2 = "";
+            this.lastNum = "";
+            const max1 = this.numberStack.length;
+            for (let i = 0; i < max1; i++) {
+                this.lastNum += this.numberStack.shift();
+            }
+            op2 = this.operatorStack.pop();
+            op1 = this.operatorStack.pop();
+            this.resultOb = this.operation(op1).toFixed(3);
+            this.display.value = "";
+            this.display.value += this.resultOb;
+            this.display.value += op2;
+            this.firstNum = this.resultOb;
+            console.log(this.firstNum);
+            this.operatorStack.push(op2);
+            console.log(this.operatorStack);
+        } else {
+            const max = this.numberStack.length;
+            for (let i = 0; i < max; ++i) {
+                this.firstNum += this.numberStack.shift();
+            }
+            this.display.value += text;
+        }
+        
+    }
+        operation(value){
+            switch (value) {
+                case '+':
+                    return Number(this.firstNum) + Number(this.lastNum);
+                    break;
+                case '-':
+                    return Number(this.firstNum) - Number(this.lastNum);
+                case '*':
+                    return Number(this.firstNum) * Number(this.lastNum);
+                    break;
+                case '/':
+                    return Number(this.firstNum) / Number(this.lastNum);
+                    break;
+
+            }
+        }
+        etcFunc(text){
+            switch (text) {
+                case '=':
+                    this.getResult();
+                    break;
+                case '.':
+                    this.float(text);
+                    break;
+                case 'AC':
+                    this.clear();
+                    break;
+            }
+        }
+       
+        getResult(){
+            this.lastNum = "";
+            let OpFinal = "";
+            let numFinal = "";
+
+            const max1 = this.numberStack.length;
+            for (let i = 0; i < max1; i++) {
+                this.lastNum += this.numberStack.shift();
+            }
+            OpFinal = this.operatorStack.pop();
+            numFinal = this.operation(OpFinal);
+            this.result.value = numFinal;
+            if (!isFinite(this.result.value)) {
+                alert("error");
+                this.clear();
+            }
+            console.log(this.result.value);
+        }
+
+        float(text){
+            this.numberStack.push(text);
+            this.display.value += text;
+            if (this.numberStack.indexOf('.') > 2) {
+                alert("에러");
+            }
+        }
+}
+const calc = new Calculator();
+
+//화면에 출력하는 함수
+const Display = (text) => {
+    if(text === '=' || text === '.'){
+        etcFunc(text);
+    }else if(!isNaN(Number(text))){
+        numberStack.push(text);
+        console.log(numberStack);
+        this.display.value += text;
+    }else{
+        if(numberStack.lengh != 0){
+            operatorStack.push(text);
+            console.log(operatorStack)
+            calculate(text);
+        }
+    }     
+}
+// 오퍼레이터에 따라서 숫자 넘겨주는 함수                
+const calculate = (text) => {
+    if(text === 'AC'){
+        clear();
+    }
+    else{
+        if(operatorStack.length > 1){
+            let op1 = "";
+            let op2 = "";
+            lastNum = "";
+            const max1 = numberStack.length;
+            for(let i=0; i<max1; i++){
+                lastNum += numberStack.shift();
+            }        
+            op2 = operatorStack.pop();
+            op1 = operatorStack.pop();
+            resultOb = operation(op1);
+            display.value = "";
+            display.value += resultOb;
+            display.value += op2;
+            firstNum = resultOb;
+            console.log(firstNum);
+            operatorStack.push(op2);
+            console.log(operatorStack);
+        }else {
+            const max = numberStack.length;
+            for (let i = 0; i < max; ++i) {
+                firstNum += numberStack.shift();
+            }
+            display.value += text;
+        }
+    }
+} 
+/* 
+// 계산 함수
+const operation = (text) => {
+    console.log(firstNum, lastNum, text)
+    switch(text){
+        case '+':
+            return Number(firstNum) + Number(lastNum);
+            break;
+        case '-':
+            return Number(firstNum) - Number(lastNum);
+        case '*':
+            return Number(firstNum).toFixed(3) * Number(lastNum).toFixed(3);
+            break;
+        case '/':
+            // 여기서 lastNum은 0이 와서는 안된다.
+            // 스위치문에서 if문을 추가하는 것은 비효율적인 코드.
+            // 연산자가 /를 눌렀을때 다음 값에서는 0을 못받아오게 만들어야한다.
+            return Number(firstNum).toFixed(3) / Number(lastNum).toFixed(3);
+            break; 
+    }
+    // if(operatorStack.length >= 2){
+    //     operatorStack.pop(text);
+    //     calculate(text);
+    // }
+} */
+// =과 .을 받는 함수
+const etcFunc = (text) => {
+    switch(text){
+        case '=':
+            getResult();
+            break;
+        case '.':
+            float(text);
+    }
+}
+// . 구현
+const float = (text) => {
+    let floatNum = "";
+    numberStack.push(text);
+    display.value += text;
+    if(numberStack.indexOf('.') > 2){
+        alert("에러");
+    }
+}
+// AC 구현
+const clear = () => {
+    this.display.value = "";
+    this.result.value = "";
+    firstNum = "";
+    lastNum = "";
+    numberStack.length = 0;
+    operatorStack.length = 0;
+    resultOb = "";
+    op1 = "";
+    op2 = "";
+}
+// = 구현
+getResult = () => {
+    if(isFinite(result)){
+        alert("0으로 나눌수 없습니다.");
+        clear();
+    }
+    lastNum = "";
+    let OpFinal = "";
+    let numFinal = "";
+    const max1 = numberStack.length;
+    for(i=0 ; i<max1 ; i++){
+        lastNum += numberStack.shift();
+    }
+    OpFinal = operatorStack.pop();
+    numFinal = operation(OpFinal);
+    result.value = numFinal;
+    console.log(result);
+    }
+// 시작부분
+ document.querySelectorAll("td").forEach((td) =>{
+    if(td.children.length < 1){
+        td.style.cursor = "pointer";
+        td.addEventListener('click', function(){
+            const text = this.textContent;
+            Display(text);
+        });
+    }
+    
+}); 
+</script>    
+</body>
+</html>
