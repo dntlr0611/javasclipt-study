@@ -2,7 +2,11 @@ package TEST;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Stream;
+
+import org.apache.jasper.tagplugins.jstl.core.ForEach;
 
 public class Test01{
     private static HashMap<String, ArrayList<String>> map = new HashMap<>();
@@ -16,9 +20,24 @@ public class Test01{
             add(name, number);
         }
         // 전화번호부의 이름 목록 출력.
+        
         System.out.println(map.keySet());
         // 중복 비허용.
+
         Set<String> overlapN = map.keySet();
+        Iterator<String> itr = overlapN.iterator();
+        while(itr.hasNext()){
+            System.out.println(itr.next());
+        }
+
+        for(Iterator<String> itr2 = overlapN.iterator(); itr2.hasNext();){
+            System.out.println(itr2.next());
+        }
+        
+        overlapN.stream().forEach(d -> {
+            System.out.println(d);
+        });
+
         System.out.println(overlapN);
         // 하지만 같은 값이 나온 이유는 add할때 중복 값 처리.
         System.out.println(map);

@@ -12,6 +12,9 @@ public class Test01_Stream{
         
         String[] data = new String[]{"이건,010-5042-2100","이건,010-5042-2200","조우식,010-4184-4212","송유정,010-5042-2300"};
         Stream<String> stream = Arrays.stream(data);
+        Stream.of(data).forEach(d -> {
+            
+        });
         System.out.println(stream);
         stream.forEach(a ->{
             String name = a.split(",")[0];
