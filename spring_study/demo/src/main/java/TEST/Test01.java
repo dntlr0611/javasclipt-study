@@ -1,3 +1,5 @@
+package TEST;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -18,7 +20,8 @@ public class Test01{
         // 중복 비허용.
         Set<String> overlapN = map.keySet();
         System.out.println(overlapN);
-        // 하지만 같은 값이 나온 이유는 
+        // 하지만 같은 값이 나온 이유는 add할때 중복 값 처리.
+        System.out.println(map);
 
     }
     public static void add(String name, String number){
