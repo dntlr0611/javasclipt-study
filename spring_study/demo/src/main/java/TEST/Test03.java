@@ -152,6 +152,7 @@ public class Test03 extends JFrame{
 				//mode값에 따라 처리, prev는 계속 계산값이 갱신됨
 				if (mode.equals("add")) {
 					prev += current;
+
 				} else if (mode.equals("sub")) {
 					prev -= current;
 				} 
@@ -160,8 +161,10 @@ public class Test03 extends JFrame{
 				} 
 				else if (mode.equals("div")) {
 					prev /= current;
+
 				} else {
 					prev = current;
+					
 				}
 			}
 		}
