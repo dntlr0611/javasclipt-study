@@ -47,7 +47,7 @@
 			console.log('onload')
 			postData('/getData.json').then(response => {
 				console.log(response);
-				const tbody = document.getElementById('tbody');
+				const tbody = document.querySelector("tbody");
 				let html = '';
 				for(const d of response){
 					html += '<tr>';
