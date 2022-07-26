@@ -31,14 +31,6 @@
 					</tr>
 				</thead>
 				<tbody id="tbody">
-					<!-- <tr>
-						<td>2020201010</td>
-						<td>geon</td>
-						<td>이건</td>
-						<td>이건</td>
-						<td>이건</td>
-						<td>이건</td>
-					</tr> -->
 				</tbody>
 			</table>
 		</p>
@@ -60,7 +52,6 @@
 					html += '<td>'+d.DEPT_SN+'</td>';
 					html += '<td>'+d.ROLE_SN+'</td>';
 					console.log(tbody);
-
 				}
 				tbody.innerHTML = html;
 			});
