@@ -5,4 +5,6 @@ import java.util.HashMap;
 
 public interface TestService {
     public ArrayList<HashMap<String, String>> getData();
+
+    public ArrayList<HashMap<String, String>> getIP();
 }

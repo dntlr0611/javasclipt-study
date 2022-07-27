@@ -15,27 +15,44 @@ import com.google.gson.Gson;
 
 @Controller
 public class TestController {
-	
+
 	@Autowired
 	TestService service;
 
-	@GetMapping("/welcome.do")
+	@GetMapping("/welcome")
 	public String welcome(Model model) {
 		System.out.println("WELCOME");
-		// ArrayList<HashMap<String, String>> list = service.getData();
-		// for(HashMap<String, String> i : list){
-		// 	System.out.println(i);
-		// }
-		// model.addAttribute("/welcome",list);
 		return "/welcome";
 	}
 
+	@GetMapping("/welcome2")
+	public String welcome2(Model model) {
+		System.out.println("WELCOME2");
+		return "/welcome2";
+	}
+	// @RequestMapping(value="/welcome")
+	// public ModelAndView nodeFind(CommandMap commandMap) throws Exception{
+	// ModelAndView mv = new ModelAndView("node_find");
+	// mv.addObject("nodeid",commandMap.get("nodeid"));
+	// mv.addObject("nodename", commandMap.get("nodename"));
+	// mv.addObject("lat", commandMap.get("lat") );
+	// }
+
 	@PostMapping("/getData.json")
 	@ResponseBody
-	public String getData(){
+	public String getData() {
 		System.out.println("getData");
 		ArrayList<HashMap<String, String>> list = service.getData();
 		Gson gson = new Gson();
 		return gson.toJson(list);
+	}
+
+	@PostMapping("/getIP.json")
+	@ResponseBody
+	public String getIP() {
+		System.out.println("getIP");
+		ArrayList<HashMap<String, String>> IPlist = service.getIP();
+		Gson gson1 = new Gson();
+		return gson1.toJson(IPlist);
 	}
 }

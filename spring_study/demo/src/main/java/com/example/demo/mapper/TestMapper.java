@@ -8,4 +8,6 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface TestMapper {
     public ArrayList<HashMap<String, String>> getData();
+
+    public ArrayList<HashMap<String, String>> getIP();
 }

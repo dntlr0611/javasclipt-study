@@ -3,7 +3,13 @@
 <mapper namespace="com.example.demo.mapper.TestMapper">
     <select id="getData" resultType="HashMap">
     SELECT DISTINCT *
-	FROM test_member ORDER BY MEMBER_CD
-	LIMIT 0,10;
+	  FROM test_member ORDER BY MEMBER_CD
+	 LIMIT 0,10;
     </select>
+
+    <select id="getIP" resultType="HashMap">
+    SELECT DISTINCT *
+	    FROM test_bsta
+    </select>
+    
 </mapper>

@@ -13,9 +13,14 @@ import com.example.demo.sevice.TestService;
 public class TestServiceImple implements TestService {
     @Autowired
     TestMapper mapper;
-    
+
     @Override
     public ArrayList<HashMap<String, String>> getData() {
         return mapper.getData();
     }
+
+    @Override
+    public ArrayList<HashMap<String, String>> getIP() {
+        return mapper.getIP();
+    };
 }
