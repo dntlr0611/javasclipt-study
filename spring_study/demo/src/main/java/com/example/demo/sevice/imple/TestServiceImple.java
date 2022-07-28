@@ -23,4 +23,9 @@ public class TestServiceImple implements TestService {
     public ArrayList<HashMap<String, String>> getIP() {
         return mapper.getIP();
     };
+
+    @Override
+    public ArrayList<HashMap<String, String>> getLink() {
+        return mapper.getLink();
+    };
 }

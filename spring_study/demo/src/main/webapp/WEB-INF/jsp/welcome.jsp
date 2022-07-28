@@ -38,38 +38,57 @@
 		<script type="text/javascript"
 			src="//dapi.kakao.com/v2/maps/sdk.js?appkey=eab4d38681779d686e887e08ab50ea7e"></script>
 		<script>
-			async function getData(){
-				const data = await postData('/getIP.json');
-				return data;
-			}
-			function CreateMap(lat, lng){
-				const container = document.getElementById("map");
-				const option = {
-					center : new kakao.maps.LatLng(35.5588949320191, 129.35836027268343),
-					level : 6
-				};
-				const map = new kakao.maps.Map(container, option);
-				return map;
-			}
-			function SetMarker(data, map){
-				const MarkerPosition = new kakao.maps.LatLng(data.LAT, data.LNG);
-				const marker = new kakao.maps.Marker({
-					position : MarkerPosition
-				});
-				marker.setMap(map);
-			}
-			
+			// async function getData(){
+			// 	const data = await postData('/getIP.json');
+			// 	return data;
+			// }
+			// function CreateMap(lat, lng){
+			// 	const container = document.getElementById("map");
+			// 	const option = {
+			// 		center : new kakao.maps.LatLng(35.5588949320191, 129.35836027268343),
+			// 		level : 6
+			// 	};
+			// 	const map = new kakao.maps.Map(container, option);
+			// 	return map;
+			// }
+			// function SetMarker(data, map){
+			// 	const MarkerPosition = new kakao.maps.LatLng(data.LAT, data.LNG);
+			// 	const marker = new kakao.maps.Marker({
+			// 		position : MarkerPosition
+			// 	});
+			// 	marker.setMap(map);
+			// }
+			// async function getLinkData() {
+			// 	const LinkData = await postData('/getLink.json');
+			// 	return LinkData;
+			// }
+			// const LinkData = await getLinkData();
+			// LinkData.forEach((LinkData, idx) => {
+			// 	const linePath = new kakao.maps.LatLng(LinkData.LAT, LinkData.LNG);
+
+			// 	const polyline =  new kakao.maps.Polyline({
+			// 		path: linePath,
+			// 		strokeWeight: 3,
+			// 		strokeColor: '#FFAE00',
+			// 		strokeOpacity: 0.7,
+			// 		strokeStryle: 'solid'
+			// 	});
+			// 	polyline.setMap(map);
+			// });
 
 			window.onload = async () => {
-				const data = await getData();
-				let map = null;
-				data.forEach((data, idx) => {
-					if(map == null){
-						map = CreateMap(data.LAT, data.LNG);
-					}
-					SetMarker(data, map);
-				});
-				
+				// const data = await getData();
+				// let map = null;
+				// data.forEach((data, idx) => {
+				// 	if(map == null){
+				// 		map = CreateMap(data.LAT, data.LNG);
+				// 	}
+				// 	SetMarker(data, map);
+				// });
+
+				// 맵 생성.
+				// 데이터 불러오기
+				// 맵에 마커 표시
 				postData('/getData.json').then(response => {
 					const tbody = document.querySelector("tbody");
 					let html = '';
@@ -86,6 +105,47 @@
 					}
 					tbody.innerHTML = html;
 				});
+				// 맵 생성
+				const container = document.getElementById("map");
+				option = {
+					center: new kakao.maps.LatLng(35.5588949320191, 129.35836027268343),
+					level: 6
+				}
+				const map = new kakao.maps.Map(container, option);
+				// 마커 이미지 변경
+				const imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
+					imageSize = new kakao.maps.Size(64, 69),
+					imageOption = { offset: new kakao.maps.Point(27, 69) };
+
+				const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+				//데이터 불러오기
+				postData('/getIP.json').then(response => {
+					for (const d of response) {
+						// 맵에 마커 표시.
+						const MarkerPosition = new kakao.maps.LatLng(d.LAT, d.LNG),
+							marker = new kakao.maps.Marker({
+								position: MarkerPosition,
+								image: markerImage
+							});
+						marker.setMap(map);
+					}
+				})
+				postData('/getLink.json').then(response => {
+					for (const d of response) {
+						// 맵에 선 생성하기.
+						const linePath = new kakao.maps.LatLng(d.LAT, d.LNG);
+						const polyline = new kakao.maps.Polyline({
+							path: [linePath],
+							strokeWeight: 3,
+							strokeColor: '#FF0000',
+							strokeOpacity: 0.7,
+							strokeStryle: 'solid'
+						});
+						// 선 생성
+						polyline.setMap(map);
+					}
+				})
 			}
 			async function postData(url = '', data = {}) {
 				// 옵션 기본 값은 *로 강조

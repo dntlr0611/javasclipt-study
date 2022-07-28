@@ -25,19 +25,6 @@ public class TestController {
 		return "/welcome";
 	}
 
-	@GetMapping("/welcome2")
-	public String welcome2(Model model) {
-		System.out.println("WELCOME2");
-		return "/welcome2";
-	}
-	// @RequestMapping(value="/welcome")
-	// public ModelAndView nodeFind(CommandMap commandMap) throws Exception{
-	// ModelAndView mv = new ModelAndView("node_find");
-	// mv.addObject("nodeid",commandMap.get("nodeid"));
-	// mv.addObject("nodename", commandMap.get("nodename"));
-	// mv.addObject("lat", commandMap.get("lat") );
-	// }
-
 	@PostMapping("/getData.json")
 	@ResponseBody
 	public String getData() {
@@ -54,5 +41,12 @@ public class TestController {
 		ArrayList<HashMap<String, String>> IPlist = service.getIP();
 		Gson gson1 = new Gson();
 		return gson1.toJson(IPlist);
+	}
+	@PostMapping("/getLink.json")
+	@ResponseBody
+	public String getLink(){
+		ArrayList<HashMap<String, String>> Linklist = service.getLink();
+		Gson gson2 = new Gson();
+		return gson2.toJson(Linklist);
 	}
 }

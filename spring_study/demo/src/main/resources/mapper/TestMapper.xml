@@ -11,5 +11,10 @@
     SELECT DISTINCT *
 	    FROM test_bsta
     </select>
+
+    <select id="getLink" resultType="HashMap">
+    SELECT DISTINCT *
+	    FROM test_link
+    </select>
     
 </mapper>
