@@ -33,11 +33,11 @@
 			<tbody id="tbody">
 			</tbody>
 		</table>
-		<div>
-			<button id="button">저장</button>
+		<input type='button' class='btn' name='btn' value='저장' style="float: right;">
 
-		</div>
-		<div id="map" style="width:500px;height:400px;"></div>
+		<p id="result"></p>
+		<div id="map" style="width:800px;height:800px;"></div>
+
 
 		<script type="text/javascript"
 			src="//dapi.kakao.com/v2/maps/sdk.js?appkey=eab4d38681779d686e887e08ab50ea7e"></script>
@@ -76,6 +76,11 @@
 					imageSize = new kakao.maps.Size(64, 69),
 					imageOption = { offset: new kakao.maps.Point(27, 69) };
 				const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+				const SavePosition = {
+					saveLat : [],
+					saveLng : []
+				}
+				console.log(SavePosition);
 				//데이터 불러오기
 				postData('/getIP.json').then(response => {
 					for (const d of response) {
@@ -83,15 +88,46 @@
 						const MarkerPosition = new kakao.maps.LatLng(d.LAT, d.LNG),
 							marker = new kakao.maps.Marker({
 								position: MarkerPosition,
+								clickable: true,
 								image: markerImage
 							});
+						// 마커 맵에 표시
 						marker.setMap(map);
+						// 인포윈도우 init
+						const iwContent = '<div style="padding:5px;">짜잔 짜잔</div>',
+							iwRemoveable = true;
+						// 첫번째 클릭 이벤트
+						kakao.maps.event.addListener(marker, 'click', function (mouseEvent) {
+							const infowindow = new kakao.maps.InfoWindow({
+								position: MarkerPosition,
+								content: iwContent
+							});
+							// 인포 윈도우 표시
+							infowindow.open(map, marker);
+							// 드래그 기능
+
+								kakao.maps.event.addListener(marker, 'click', function (mouseEvent) {
+									marker.setDraggable(true);
+								});
+								kakao.maps.event.addListener(marker, 'dragend', function (mouseEvent) {
+									marker.setDraggable(false);
+									const EndPosition = marker.getPosition();
+									const message = '위도 : ' + EndPosition.getLat() + '경도 : ' + EndPosition.getLng();
+									const resultDiv = document.getElementById('result');
+									resultDiv.innerHTML = message;
+									infowindow.setMap(null);
+									SavePosition.saveLat = EndPosition.getLat();
+									SavePosition.saveLng = EndPosition.getLng();
+								});
+						})
 					}
+
 				})
 				postData('/getLink.json').then(response => {
 					LinkData(response);
 				})
 			}
+			// 데이터 로드
 			function LinkData(arr) {
 				let linkarr = [];
 				for (x in arr) {
@@ -101,8 +137,8 @@
 				console.log(linkarr);
 				setPoly(linkarr);
 			}
+			// 선그리기.
 			function setPoly(line) {
-				// 선 그리기.
 				const polyline = new kakao.maps.Polyline({
 					path: line,
 					strokeWeight: 3,
@@ -112,6 +148,7 @@
 				});
 				polyline.setMap(map);
 			}
+
 			async function postData(url = '', data = {}) {
 				// 옵션 기본 값은 *로 강조
 				const response = await fetch(url, {
