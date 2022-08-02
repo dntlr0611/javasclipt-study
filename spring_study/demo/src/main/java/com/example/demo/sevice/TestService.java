@@ -9,4 +9,6 @@ public interface TestService {
     public ArrayList<HashMap<String, String>> getIP();
 
     public ArrayList<HashMap<String, String>> getLink();
+
+    public int update(HashMap<String, Object> params);
 }

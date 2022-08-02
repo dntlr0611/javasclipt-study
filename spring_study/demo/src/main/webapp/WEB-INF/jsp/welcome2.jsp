@@ -33,8 +33,7 @@
 			<tbody id="tbody">
 			</tbody>
 		</table>
-		<input type='button' class='btn' name='btn' value='저장' style="float: right;">
-
+		<input type='button' id="btn" value='저장' style="float: right;">
 		<p id="result"></p>
 		<div id="map" style="width:800px;height:800px;"></div>
 
@@ -42,18 +41,11 @@
 		<script type="text/javascript"
 			src="//dapi.kakao.com/v2/maps/sdk.js?appkey=eab4d38681779d686e887e08ab50ea7e"></script>
 		<script>
-			// 맵 생성
-			const container = document.getElementById("map");
-			option = {
-				center: new kakao.maps.LatLng(35.5588949320191, 129.35836027268343),
-				level: 6
-			}
-			const map = new kakao.maps.Map(container, option);
+			const MarkerContainer = [];
+			let MAP = null;
+			const UpdateData = {};
 
 			window.onload = async () => {
-				// 맵 생성.
-				// 데이터 불러오기
-				// 맵에 마커 표시
 				postData('/getData.json').then(response => {
 					const tbody = document.querySelector("tbody");
 					let html = '';
@@ -69,76 +61,112 @@
 						html += '<td>' + d.ROLE_SN + '</td>';
 					}
 					tbody.innerHTML = html;
+					// 맵 생성.
+					SetMap();
+					// 마커 생성
+					GetMarker();
+					// 선 생성
+					GetPoly();
+					// 마커 종료된 위치 좌표값.
+					document.getElementById("btn").addEventListener('click', (e) => {
+						// 마커 데이터 컨트롤
+						MarkerController();
+						postData("/getUpdate.json", UpdateData);
+					});
+
 				});
-
-				// 마커 이미지 변경
-				const imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
-					imageSize = new kakao.maps.Size(64, 69),
-					imageOption = { offset: new kakao.maps.Point(27, 69) };
-				const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
-				const SavePosition = {
-					saveLat : [],
-					saveLng : []
-				}
-				console.log(SavePosition);
-				//데이터 불러오기
+			}
+			const GetMarker = () =>{
 				postData('/getIP.json').then(response => {
-					for (const d of response) {
-						// 맵에 마커 표시.
-						const MarkerPosition = new kakao.maps.LatLng(d.LAT, d.LNG),
-							marker = new kakao.maps.Marker({
-								position: MarkerPosition,
-								clickable: true,
-								image: markerImage
-							});
-						// 마커 맵에 표시
-						marker.setMap(map);
-						// 인포윈도우 init
-						const iwContent = '<div style="padding:5px;">짜잔 짜잔</div>',
-							iwRemoveable = true;
-						// 첫번째 클릭 이벤트
-						kakao.maps.event.addListener(marker, 'click', function (mouseEvent) {
-							const infowindow = new kakao.maps.InfoWindow({
-								position: MarkerPosition,
-								content: iwContent
-							});
-							// 인포 윈도우 표시
-							infowindow.open(map, marker);
-							// 드래그 기능
-
-								kakao.maps.event.addListener(marker, 'click', function (mouseEvent) {
-									marker.setDraggable(true);
-								});
-								kakao.maps.event.addListener(marker, 'dragend', function (mouseEvent) {
-									marker.setDraggable(false);
-									const EndPosition = marker.getPosition();
-									const message = '위도 : ' + EndPosition.getLat() + '경도 : ' + EndPosition.getLng();
-									const resultDiv = document.getElementById('result');
-									resultDiv.innerHTML = message;
-									infowindow.setMap(null);
-									SavePosition.saveLat = EndPosition.getLat();
-									SavePosition.saveLng = EndPosition.getLng();
-								});
-						})
-					}
-
+					SetMarker(response);
 				})
+			}
+			const GetPoly = () =>{
+				//데이터 불러오기
 				postData('/getLink.json').then(response => {
 					LinkData(response);
 				})
 			}
+			const MarkerImage = () => {
+				const imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
+					imageSize = new kakao.maps.Size(64, 69),
+					imageOption = { offset: new kakao.maps.Point(27, 69) };
+				const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+				return markerImage;
+
+			}
+			const SetMap = () => {
+				// 맵 생성
+				const container = document.getElementById("map");
+				option = {
+					center: new kakao.maps.LatLng(35.5588949320191, 129.35836027268343),
+					level: 6
+				}
+				MAP = new kakao.maps.Map(container, option);
+			}
+			const SetMarker = (response) => {
+				// 마커 이미지 변경
+				Markerimg = MarkerImage();
+				for (const d of response) {
+					// 맵에 마커 표시.
+					const MarkerPosition = new kakao.maps.LatLng(d.LAT, d.LNG),
+						  marker = new kakao.maps.Marker({
+							  position: MarkerPosition,
+							  clickable: true,
+							  image: Markerimg
+						});
+						marker.setMap(MAP);
+						marker.key = d.BSTA_ID;
+						MarkerContainer.push(marker);
+						
+						EventController(marker , MarkerPosition);
+				}
+			}
+			const EventController = (marker, MarkerPosition) =>{
+				// 인포윈도우 init
+				const iwContent = '<div style="padding:5px;">짜잔 짜잔</div>',
+					  iwRemoveable = true;
+				// 첫번째 클릭 이벤트
+				kakao.maps.event.addListener(marker, 'click', function (mouseEvent) {
+					const infowindow = new kakao.maps.InfoWindow({
+						position: MarkerPosition,
+						content: iwContent
+					});
+					// 인포 윈도우 표시
+					infowindow.open(MAP, marker);
+					// 드래그 기능
+					kakao.maps.event.addListener(marker, 'click', function (mouseEvent) {
+						marker.setDraggable(true);
+						infowindow.setMap(null);
+					});
+				})
+				kakao.maps.event.addListener(marker, 'dragend', function (mouseEvent) {
+					marker.setDraggable(false);
+					const EndPosition = marker.getPosition();
+					const message = '위도 : ' + EndPosition.getLat() + ' 경도 : ' + EndPosition.getLng();
+					const resultDiv = document.getElementById('result');
+					resultDiv.innerHTML = message; 
+				});
+			}
+			const MarkerController = () =>{
+				for (const m of MarkerContainer) {
+					UpdateData[m.key] = {
+						lat: m.getPosition().getLat(),
+						lng: m.getPosition().getLng()
+					}
+				}
+			}
 			// 데이터 로드
-			function LinkData(arr) {
+			const LinkData = (arr) => {
 				let linkarr = [];
 				for (x in arr) {
 					const linePath = new kakao.maps.LatLng(arr[x].LAT, arr[x].LNG);
 					linkarr.push(linePath);
 				}
-				console.log(linkarr);
-				setPoly(linkarr);
+				SetPoly(linkarr);
 			}
 			// 선그리기.
-			function setPoly(line) {
+			const SetPoly = (line) => {
 				const polyline = new kakao.maps.Polyline({
 					path: line,
 					strokeWeight: 3,
@@ -146,9 +174,8 @@
 					strokeOpacity: 0.7,
 					strokeStryle: 'solid'
 				});
-				polyline.setMap(map);
+				polyline.setMap(MAP);
 			}
-
 			async function postData(url = '', data = {}) {
 				// 옵션 기본 값은 *로 강조
 				const response = await fetch(url, {

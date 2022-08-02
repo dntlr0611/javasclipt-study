@@ -12,4 +12,7 @@ public interface TestMapper {
     public ArrayList<HashMap<String, String>> getIP();
     
     public ArrayList<HashMap<String, String>> getLink();
+
+    public String update(HashMap<String, String> object);
+    
 }
