@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -60,8 +61,10 @@ public class TestController {
 	// , produces="application/json; charset=UTF-8"
 	@PostMapping(value = "/getUpdate.json")
 	@ResponseBody
-	public String getUpdate(@RequestBody HashMap<String, Object> params) {
+	public String getUpdate(@RequestBody ArrayList<HashMap<String , String>> params) {
+		System.out.println(params);
 		Gson gson = new Gson();
+		
 		service.update(params);
 		return gson.toJson(params);
 	}

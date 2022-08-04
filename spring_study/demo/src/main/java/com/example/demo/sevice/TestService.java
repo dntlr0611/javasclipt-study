@@ -10,5 +10,5 @@ public interface TestService {
 
     public ArrayList<HashMap<String, String>> getLink();
 
-    public int update(HashMap<String, Object> params);
+    public String update(ArrayList<HashMap<String , String>> params);
 }

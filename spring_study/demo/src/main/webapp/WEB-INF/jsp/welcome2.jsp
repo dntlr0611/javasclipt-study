@@ -41,9 +41,9 @@
 		<script type="text/javascript"
 			src="//dapi.kakao.com/v2/maps/sdk.js?appkey=eab4d38681779d686e887e08ab50ea7e"></script>
 		<script>
-			const MarkerContainer = [];
+			let MarkerContainer = {};
 			let MAP = null;
-			const UpdateData = {};
+			let UpdateData = [];
 
 			window.onload = async () => {
 				postData('/getData.json').then(response => {
@@ -70,8 +70,10 @@
 					// 마커 종료된 위치 좌표값.
 					document.getElementById("btn").addEventListener('click', (e) => {
 						// 마커 데이터 컨트롤
-						MarkerController();
+						console.log(UpdateData);
 						postData("/getUpdate.json", UpdateData);
+						MarkerContainer = {};
+						UpdateData = [];
 					});
 
 				});
@@ -84,6 +86,7 @@
 			const GetPoly = () =>{
 				//데이터 불러오기
 				postData('/getLink.json').then(response => {
+					console.log(response)
 					LinkData(response);
 				})
 			}
@@ -117,10 +120,9 @@
 						});
 						marker.setMap(MAP);
 						marker.key = d.BSTA_ID;
-						MarkerContainer.push(marker);
-						
 						EventController(marker , MarkerPosition);
 				}
+			
 			}
 			const EventController = (marker, MarkerPosition) =>{
 				// 인포윈도우 init
@@ -145,17 +147,23 @@
 					const EndPosition = marker.getPosition();
 					const message = '위도 : ' + EndPosition.getLat() + ' 경도 : ' + EndPosition.getLng();
 					const resultDiv = document.getElementById('result');
-					resultDiv.innerHTML = message; 
+					resultDiv.innerHTML = message;
+					MarkerContainer = {
+						BSTA_ID: marker.key,
+						LAT: marker.getPosition().getLat(),
+						LNG: marker.getPosition().getLng()
+					}
+					UpdateData.push(MarkerContainer);
 				});
 			}
-			const MarkerController = () =>{
-				for (const m of MarkerContainer) {
-					UpdateData[m.key] = {
-						lat: m.getPosition().getLat(),
-						lng: m.getPosition().getLng()
-					}
-				}
-			}
+			// const MarkerController = () =>{
+			// 	for (const m of MarkerContainer) {
+			// 		UpdateData[m.key] = {
+			// 			lat: m.getPosition().getLat(),
+			// 			lng: m.getPosition().getLng()
+			// 		}
+			// 	}
+			// }
 			// 데이터 로드
 			const LinkData = (arr) => {
 				let linkarr = [];

@@ -13,6 +13,6 @@ public interface TestMapper {
     
     public ArrayList<HashMap<String, String>> getLink();
 
-    public String update(HashMap<String, String> object);
+    public String update(HashMap<String , String> object);
     
 }
