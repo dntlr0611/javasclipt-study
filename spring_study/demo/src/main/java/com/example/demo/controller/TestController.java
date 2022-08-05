@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -64,9 +63,23 @@ public class TestController {
 	public String getUpdate(@RequestBody ArrayList<HashMap<String , String>> params) {
 		System.out.println(params);
 		Gson gson = new Gson();
-		
 		service.update(params);
 		return gson.toJson(params);
 	}
-
+	// @PostMapping(value = "/setIP.json")
+	// @ResponseBody
+	// public String setIP(@RequestBody ArrayList<HashMap<String, String>> res){
+	// 	System.out.println(res);
+	// 	Gson gson = new Gson();
+	// 	service.setIP(res);
+	// 	return gson.toJson(res);
+	// }
+	@PostMapping(value = "/delIP.json")
+	@ResponseBody
+	public String delIP(@RequestBody ArrayList<HashMap<String, String>> del){
+		System.out.println(del);
+		Gson gson = new Gson();
+		service.delIP(del);
+		return gson.toJson(del);
+	}
 }

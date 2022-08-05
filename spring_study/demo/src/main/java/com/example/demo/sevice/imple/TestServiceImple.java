@@ -29,6 +29,22 @@ public class TestServiceImple implements TestService {
     public ArrayList<HashMap<String, String>> getLink() {
         return mapper.getLink();
     };
+
+    // @Override
+    // public String setIP(ArrayList<HashMap<String, String>> res){
+    //     res.forEach(i ->{
+    //         mapper.setIP(i);
+    //     });
+    //     return "insert";
+    // }
+    @Override
+    public String delIP(ArrayList<HashMap<String, String>> del){
+        del.forEach(i ->{
+            mapper.delIP(i);
+        });
+        return "insert";
+    }
+
     @Override
     public String update(ArrayList<HashMap<String , String>> params) {
         /*{1920309215={lat=35.564827236310855, lng=129.35910760905102}, 1920309214={lat=35.55205331276655, lng=129.3451051449107}, 1920309213={lat=35.55889493201912, lng=129.3583602726868}, 1920309212={lat=35.557710133147225, lng=129.33591937071702}}*/

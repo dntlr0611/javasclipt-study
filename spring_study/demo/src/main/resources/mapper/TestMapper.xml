@@ -3,8 +3,8 @@
 <mapper namespace="com.example.demo.mapper.TestMapper">
     <select id="getData" resultType="HashMap">
     SELECT DISTINCT *
-	  FROM test_member ORDER BY MEMBER_CD
-	 LIMIT 0,10;
+	    FROM test_member ORDER BY MEMBER_CD
+      LIMIT 5;
     </select>
 
     <select id="getIP" resultType="HashMap">
@@ -20,9 +20,18 @@
 
     <select id = "update" parameterType="HashMap">
     UPDATE test_bsta
-    SET LAT=#{LAT}
-      , LNG=#{LNG}
-    WHERE BSTA_ID = #{BSTA_ID}
+      SET LAT=#{LAT}
+       , LNG=#{LNG}
+      WHERE BSTA_ID = #{BSTA_ID}
+    </select>
+
+    <!-- <select id = "setIP" parameterType="HashMap">
+    INSERT INTO test_bsta(BSTA_ID, LAT, LNG)
+      VALUES(#{BSTA_ID}, #{LAT}, #{LNG})
+    </select> -->
+
+    <select id = "delIP" parameterType="HashMap">
+
     </select>
 
 </mapper>

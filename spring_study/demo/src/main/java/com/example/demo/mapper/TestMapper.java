@@ -14,5 +14,9 @@ public interface TestMapper {
     public ArrayList<HashMap<String, String>> getLink();
 
     public String update(HashMap<String , String> object);
+
+    // public String setIP(HashMap<String, String> res);
+
+    public String delIP(HashMap<String, String> del);
     
 }
