@@ -33,19 +33,21 @@
 			<tbody id="tbody">
 			</tbody>
 		</table>
-		<input type='button' id="btn" value='저장' style="float: right;">
+		<input type='button' id="btnupdate" value='업데이트' style="float: right;">
+		<input type='button' id="btnsave" value='저장' style="float: right;">
 		<input type="button" id="delbtn" value="삭제" style="float: right">
-		
+
 		<p id="result"></p>
-		
+
 		<div id="map" style="width:800px;height:800px;"></div>
-		
+
 		<script type="text/javascript"
 			src="//dapi.kakao.com/v2/maps/sdk.js?appkey=eab4d38681779d686e887e08ab50ea7e"></script>
 		<script>
 			let MarkerContainer = {};
 			let MAP = null;
 			let UpdateData = [];
+			let cnt = 0;
 
 			window.onload = async () => {
 				// 데이터베이스 테이블 load
@@ -72,17 +74,22 @@
 				// 선 생성
 				GetPoly();
 				// 마커 종료된 위치 좌표값.
-				document.getElementById("btn").addEventListener('click', (e) => {
+				document.getElementById("btnupdate").addEventListener('click', (e) => {
 					// 마커 데이터 컨트롤
-					console.log(UpdateData);
-					postData("/getUpdate.json", UpdateData);
 					console.log(MarkerContainer);
 					console.log(UpdateData);
-					MarkerContainer = {};
-					UpdateData = [];
-
+					postData("/getUpdate.json", UpdateData);
+					InitData();
+				});
+				document.getElementById("btnsave").addEventListener('click', (e) => {
+					// 마커 데이터 컨트롤
+					console.log(MarkerContainer);
+					console.log(UpdateData);
+					postData("/setIP.json", UpdateData);
+					InitData();
 				});
 			}
+
 			const GetMarker = () => {
 				postData('/getIP.json').then(response => {
 					SetMarker(response);
@@ -101,7 +108,7 @@
 				const container = document.getElementById("map");
 				option = {
 					center: new kakao.maps.LatLng(35.5588949320191, 129.35836027268343),
-					level: 6
+					level: 8
 				}
 				MAP = new kakao.maps.Map(container, option);
 			}
@@ -118,47 +125,54 @@
 					marker.key = d.BSTA_ID;
 					EventController(marker, MarkerPosition);
 				}
+				// 맵에 우클릭시 마커 생성
+				kakao.maps.event.addListener(MAP, 'rightclick', function (mouseEvent) {
+					const Insertposition = mouseEvent.latLng;
+					Insertmarker = new kakao.maps.Marker({
+						position: Insertposition
+					});
+					Insertmarker.setMap(MAP);
+					Insertmarker.key = 1920309216 + cnt;
+					cnt++;
+					EventController(Insertmarker, Insertposition);
+					SaveMarkerPos(Insertmarker);
+				})
 			}
 			const EventController = (marker, MarkerPosition) => {
 				// 인포윈도우 init
-				const iwContent = '<div style="padding:5px;">짜잔 짜잔</div>',
-					  iwRemoveable = true;
+				const iwContent = '<div> ? <div>',
+					iwRemoveable = true;
 				const infowindow = new kakao.maps.InfoWindow({
 					position: MarkerPosition,
 					content: iwContent
 				});
-				// 맵에 우클릭시 마커 생성
-				kakao.maps.event.addListener(MAP, 'rightclick', function(mouseEvent){
-					const Insertposition = mouseEvent.latLng;
-					Insertmarker = new kakao.maps.Marker({
-						position : Insertposition
-					});
-					Insertmarker.setMap(MAP);
-				})
+
 				// 첫번째 클릭 이벤트
 				kakao.maps.event.addListener(marker, 'click', function (mouseEvent) {
 					// 삭제 버튼 추가
-					document.getElementById("delbtn").addEventListener('click' , (e) => {
-						marker.setMap(null);
+					document.getElementById("delbtn").addEventListener('click', (e) => {
+						UpdateData.pop();
+						console.log(UpdateData);
+						for(let i=0; i<UpdateData.length ; i++){
+							marker.setMap(UpdateData[i]);
+						}			
+									
+						postData('/setIP.json', );
 					});
 					// 드래그 기능
 					kakao.maps.event.addListener(marker, 'click', function (mouseEvent) {
 						marker.setDraggable(true);
 					});
+					kakao.maps.event.addListener(marker, 'dragend', function (mouseEvent) {
+						marker.setDraggable(false);
+						const EndPosition = marker.getPosition();
+						const message = '위도 : ' + EndPosition.getLat() + ' 경도 : ' + EndPosition.getLng();
+						const resultDiv = document.getElementById('result');
+						resultDiv.innerHTML = message;
+						SaveMarkerPos(marker);
+						InitData();
+					});
 				})
-				kakao.maps.event.addListener(marker, 'dragend', function (mouseEvent) {
-					marker.setDraggable(false);
-					const EndPosition = marker.getPosition();
-					const message = '위도 : ' + EndPosition.getLat() + ' 경도 : ' + EndPosition.getLng();
-					const resultDiv = document.getElementById('result');
-					resultDiv.innerHTML = message;
-					MarkerContainer = {
-						BSTA_ID: marker.key,
-						LAT: marker.getPosition().getLat(),
-						LNG: marker.getPosition().getLng()
-					}
-					UpdateData.push(MarkerContainer);
-				});
 				// 인포 윈도우 표시
 				kakao.maps.event.addListener(marker, 'mouseover', MarkOver(MAP, marker, infowindow))
 				kakao.maps.event.addListener(marker, 'mouseout', function () {
@@ -167,7 +181,7 @@
 			}
 			// 마커 인포윈도우 함수
 			const MarkOver = (map, marker, infowindow) => {
-				return function(){
+				return function () {
 					infowindow.open(MAP, marker);
 				}
 			}
@@ -179,6 +193,18 @@
 					linkarr.push(linePath);
 				}
 				SetPoly(linkarr);
+			}
+			const InitData = () =>{
+				UpdateData = [];
+				MarkerContainer = {};
+			}
+			const SaveMarkerPos = (marker) => {
+				MarkerContainer = {
+					BSTA_ID: marker.key,
+					LAT: marker.getPosition().getLat(),
+					LNG: marker.getPosition().getLng()
+				}
+				UpdateData.push(MarkerContainer);
 			}
 			// 선그리기.
 			const SetPoly = (line) => {

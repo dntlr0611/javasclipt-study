@@ -25,13 +25,14 @@
       WHERE BSTA_ID = #{BSTA_ID}
     </select>
 
-    <!-- <select id = "setIP" parameterType="HashMap">
+    <select id = "setIP" parameterType="HashMap">
     INSERT INTO test_bsta(BSTA_ID, LAT, LNG)
       VALUES(#{BSTA_ID}, #{LAT}, #{LNG})
-    </select> -->
+    </select>
 
     <select id = "delIP" parameterType="HashMap">
-
+    DELETE FROM test_bsta
+      WHERE BSTA_ID = #{BSTA_ID}
     </select>
 
 </mapper>

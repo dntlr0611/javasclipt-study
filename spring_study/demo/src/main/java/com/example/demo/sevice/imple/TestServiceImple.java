@@ -30,13 +30,13 @@ public class TestServiceImple implements TestService {
         return mapper.getLink();
     };
 
-    // @Override
-    // public String setIP(ArrayList<HashMap<String, String>> res){
-    //     res.forEach(i ->{
-    //         mapper.setIP(i);
-    //     });
-    //     return "insert";
-    // }
+    @Override
+    public String setIP(ArrayList<HashMap<String, String>> res){
+        res.forEach(i ->{
+            mapper.setIP(i);
+        });
+        return "insert";
+    }
     @Override
     public String delIP(ArrayList<HashMap<String, String>> del){
         del.forEach(i ->{

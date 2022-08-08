@@ -66,14 +66,14 @@ public class TestController {
 		service.update(params);
 		return gson.toJson(params);
 	}
-	// @PostMapping(value = "/setIP.json")
-	// @ResponseBody
-	// public String setIP(@RequestBody ArrayList<HashMap<String, String>> res){
-	// 	System.out.println(res);
-	// 	Gson gson = new Gson();
-	// 	service.setIP(res);
-	// 	return gson.toJson(res);
-	// }
+	@PostMapping(value = "/setIP.json")
+	@ResponseBody
+	public String setIP(@RequestBody ArrayList<HashMap<String, String>> res){
+		System.out.println(res);
+		Gson gson = new Gson();
+		service.setIP(res);
+		return gson.toJson(res);
+	}
 	@PostMapping(value = "/delIP.json")
 	@ResponseBody
 	public String delIP(@RequestBody ArrayList<HashMap<String, String>> del){

@@ -15,7 +15,7 @@ public interface TestMapper {
 
     public String update(HashMap<String , String> object);
 
-    // public String setIP(HashMap<String, String> res);
+    public String setIP(HashMap<String, String> res);
 
     public String delIP(HashMap<String, String> del);
     
