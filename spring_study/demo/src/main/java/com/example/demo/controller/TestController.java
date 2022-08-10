@@ -76,7 +76,7 @@ public class TestController {
 	}
 	@PostMapping(value = "/delIP.json")
 	@ResponseBody
-	public String delIP(@RequestBody ArrayList<HashMap<String, String>> del){
+	public String delIP(@RequestBody HashMap<String, String> del){
 		System.out.println(del);
 		Gson gson = new Gson();
 		service.delIP(del);

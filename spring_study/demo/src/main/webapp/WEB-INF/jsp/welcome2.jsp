@@ -123,6 +123,7 @@
 						});
 					marker.setMap(MAP);
 					marker.key = d.BSTA_ID;
+					SaveMarkerPos(marker);
 					EventController(marker, MarkerPosition);
 				}
 				// 맵에 우클릭시 마커 생성
@@ -132,10 +133,10 @@
 						position: Insertposition
 					});
 					Insertmarker.setMap(MAP);
-					Insertmarker.key = 1920309216 + cnt;
+					Insertmarker.key = `1920309216_${cnt}` 
 					cnt++;
-					EventController(Insertmarker, Insertposition);
 					SaveMarkerPos(Insertmarker);
+					EventController(Insertmarker, Insertposition);
 				})
 			}
 			const EventController = (marker, MarkerPosition) => {
@@ -149,16 +150,6 @@
 
 				// 첫번째 클릭 이벤트
 				kakao.maps.event.addListener(marker, 'click', function (mouseEvent) {
-					// 삭제 버튼 추가
-					document.getElementById("delbtn").addEventListener('click', (e) => {
-						UpdateData.pop();
-						console.log(UpdateData);
-						for(let i=0; i<UpdateData.length ; i++){
-							marker.setMap(UpdateData[i]);
-						}			
-									
-						postData('/setIP.json', );
-					});
 					// 드래그 기능
 					kakao.maps.event.addListener(marker, 'click', function (mouseEvent) {
 						marker.setDraggable(true);
@@ -171,6 +162,13 @@
 						resultDiv.innerHTML = message;
 						SaveMarkerPos(marker);
 						InitData();
+					});
+					// 삭제 버튼 추가
+					document.getElementById("delbtn").addEventListener('click', (e) => {
+						const del = UpdateData.pop();
+						marker.setMap();
+						console.log(del)
+						postData('/delIP.json', del);
 					});
 				})
 				// 인포 윈도우 표시
@@ -194,7 +192,7 @@
 				}
 				SetPoly(linkarr);
 			}
-			const InitData = () =>{
+			const InitData = () => {
 				UpdateData = [];
 				MarkerContainer = {};
 			}

@@ -38,10 +38,8 @@ public class TestServiceImple implements TestService {
         return "insert";
     }
     @Override
-    public String delIP(ArrayList<HashMap<String, String>> del){
-        del.forEach(i ->{
-            mapper.delIP(i);
-        });
+    public String delIP(HashMap<String, String> del){
+            mapper.delIP(del);
         return "insert";
     }
 
